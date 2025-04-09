@@ -1,0 +1,94 @@
+{% extends 'optimizer/base.html' %} {% block title %}Batch List - Alloy
+Optimizer{% endblock %} {% block content %}
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">Optimization Batches</h1>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="mb-0">All Batches</h5>
+        <div>
+          <a href="{% url 'create_batch' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> Create New Batch
+          </a>
+        </div>
+      </div>
+      <div class="card-body">
+        {% if batches %}
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Products</th>
+                <th>Result</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for batch in batches %}
+              <tr>
+                <td>{{ batch.name }}</td>
+                <td>{{ batch.created_at|date:"M d, Y H:i" }}</td>
+                <td>
+                  {% if batch.status == 'pending' %}
+                  <span class="badge bg-warning">Pending</span>
+                  {% elif batch.status == 'completed' %}
+                  <span class="badge bg-success">Completed</span>
+                  {% else %}
+                  <span class="badge bg-secondary">{{ batch.status }}</span>
+                  {% endif %}
+                </td>
+                <td>{{ batch.products.count }}</td>
+                <td>
+                  {% if batch.result %}
+                  <a
+                    href="{% url 'view_optimization_result' pk=batch.result.pk %}"
+                    class="btn btn-sm btn-info text-white"
+                  >
+                    <i class="fas fa-chart-bar"></i> View
+                  </a>
+                  {% else %}
+                  <span class="text-muted">—</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <a
+                    href="{% url 'edit_batch' pk=batch.pk %}"
+                    class="btn btn-sm btn-outline-secondary"
+                  >
+                    <i class="fas fa-edit"></i> Edit
+                  </a>
+                  {% if batch.status == 'pending' %}
+                  <a
+                    href="{% url 'run_optimization' pk=batch.pk %}"
+                    class="btn btn-sm btn-success"
+                  >
+                    <i class="fas fa-play"></i> Run
+                  </a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+          No batches created yet.
+          <a href="{% url 'create_batch' %}">Create a new batch</a>.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

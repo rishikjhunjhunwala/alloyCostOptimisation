@@ -1,0 +1,69 @@
+{% extends 'optimizer/base.html' %} {% block title %}View Composition
+Requirements - Alloy Optimizer{% endblock %} {% block content %}
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">Composition Requirements</h1>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="mb-0">Product Specifications</h5>
+        <div>
+          <a
+            href="{% url 'upload_composition_requirements' %}"
+            class="btn btn-primary"
+          >
+            <i class="fas fa-upload me-2"></i> Upload New
+          </a>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                {% for column in columns %}
+                <th>{{ column }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in data %}
+              <tr>
+                {% for column in columns %}
+                <td>
+                  {% if column == 'Amount' %} {{
+                  row|get_item:column|floatformat:0 }} {% elif '_MIN' in column
+                  or '_MAX' in column %} {{ row|get_item:column|floatformat:6 }}
+                  {% else %} {{ row|get_item:column }} {% endif %}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  // Custom filter to get dict item by key
+  document.addEventListener("DOMContentLoaded", function () {
+    // This is a workaround for the Django template filter get_item
+    // In a real Django app, you would define this filter in templatetags
+    const cells = document.querySelectorAll("td");
+    cells.forEach((cell) => {
+      if (cell.textContent.trim() === "None") {
+        cell.textContent = "";
+      }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends 'optimizer/base.html' %} {% block title %}Dashboard - Alloy
+Optimizer{% endblock %} {% block content %}
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">Dashboard</h1>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Quick Stats -->
+  <div class="col-md-3 mb-4">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <h5 class="card-title">Total Batches</h5>
+        <h2 class="mb-0">{{ batches.count }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <h5 class="card-title">Completed Optimizations</h5>
+        <h2 class="mb-0">{{ results.count }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <h5 class="card-title">Scrap Materials</h5>
+        <h2 class="mb-0">{{ scrap_data.count }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <h5 class="card-title">Product Specs</h5>
+        <h2 class="mb-0">{{ comp_requirements.count }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Recent Batches -->
+  <div class="col-md-6 mb-4">
+    <div class="card h-100">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="mb-0">Recent Batches</h5>
+        <a href="{% url 'batch_list' %}" class="btn btn-sm btn-outline-primary"
+          >View All</a
+        >
+      </div>
+      <div class="card-body">
+        {% if batches %}
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for batch in batches %}
+              <tr>
+                <td>{{ batch.name }}</td>
+                <td>{{ batch.created_at|date:"M d, Y" }}</td>
+                <td>
+                  {% if batch.status == 'pending' %}
+                  <span class="badge bg-warning">Pending</span>
+                  {% elif batch.status == 'completed' %}
+                  <span class="badge bg-success">Completed</span>
+                  {% else %}
+                  <span class="badge bg-secondary">{{ batch.status }}</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <a
+                    href="{% url 'edit_batch' pk=batch.pk %}"
+                    class="btn btn-sm btn-outline-secondary"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+          No batches created yet.
+          <a href="{% url 'create_batch' %}">Create a new batch</a>.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Results -->
+  <div class="col-md-6 mb-4">
+    <div class="card h-100">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="mb-0">Recent Results</h5>
+        <a href="{% url 'result_list' %}" class="btn btn-sm btn-outline-primary"
+          >View All</a
+        >
+      </div>
+      <div class="card-body">
+        {% if results %}
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Created</th>
+                <th>Products</th>
+                <th>Total Cost</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for result in results %}
+              <tr>
+                <td>{{ result.id }}</td>
+                <td>{{ result.created_at|date:"M d, Y" }}</td>
+                <td>{{ result.total_products }}</td>
+                <td>${{ result.total_cost|floatformat:2 }}</td>
+                <td>
+                  <a
+                    href="{% url 'view_optimization_result' pk=result.pk %}"
+                    class="btn btn-sm btn-outline-primary"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a
+                    href="{% url 'download_optimization_result' pk=result.pk %}"
+                    class="btn btn-sm btn-outline-success"
+                  >
+                    <i class="fas fa-download"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+          No optimization results yet.
+          <a href="{% url 'create_batch' %}">Create a batch</a> to run
+          optimization.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Quick Actions -->
+  <div class="col-12 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Quick Actions</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <a
+              href="{% url 'upload_scrap_data' %}"
+              class="btn btn-primary d-block"
+            >
+              <i class="fas fa-upload me-2"></i> Upload Scrap Data
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a
+              href="{% url 'upload_composition_requirements' %}"
+              class="btn btn-primary d-block"
+            >
+              <i class="fas fa-upload me-2"></i> Upload Composition
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="{% url 'create_batch' %}" class="btn btn-success d-block">
+              <i class="fas fa-plus me-2"></i> Create Batch
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a
+              href="{% url 'result_list' %}"
+              class="btn btn-info d-block text-white"
+            >
+              <i class="fas fa-chart-bar me-2"></i> View Results
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

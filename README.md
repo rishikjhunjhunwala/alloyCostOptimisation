@@ -1,72 +1,38 @@
-# Alloy Optimizer Project
+# Alloy Optimizer
 
-## Overview
+A Django web application for optimizing aluminum alloy composition using linear programming.
 
-The Alloy Optimizer Project is a Python-based application designed to optimize the composition of scrap input for obtaining a output-mix with minimised cost. It leverages advanced algorithms to determine the best combination of materials to achieve desired chemical properties and cost-effectiveness.
+## Description
 
-The application achieves this with Linear Programming (PuLP) of Blended Problems.
+Alloy Optimizer helps metal recycling and manufacturing companies determine the most cost-effective mix of scrap materials to meet specific alloy composition requirements. Using linear programming techniques, the application calculates optimal formulations while respecting constraints on element percentages (Silicon, Iron, Copper, Manganese, Magnesium).
 
 ## Features
 
-- **Custom Alloy Optimization**: Define target properties and constraints to generate optimal alloy compositions.
-- **Material Database Integration**: Utilize a built-in database of materials with their properties.
-- **Cost Analysis**: Evaluate the cost implications of different alloy compositions.
-- **User-Friendly Interface**: Simple and intuitive interface for defining requirements and viewing results.
-- **Extensibility**: Easily extendable to include additional materials or optimization criteria.
+- Upload and manage scrap material data (compositions, costs, availability)
+- Upload and manage product composition requirements
+- Create optimization batches with multiple products
+- Run optimization to find the most economical material mix
+- View and download optimization results
 
 ## Installation
 
-1. Clone the repository:
-
-   ```bash
-   git clone <repository-url>
-   cd alloy_optimizer_project
-   ```
-
-2. Create a virtual environment and activate it:
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Usage
-
-1. Run the application:
-
-   ```bash
-   python main.py
-   ```
-
-2. Follow the on-screen instructions to input your desired alloy properties and constraints.
-
-3. View the optimized alloy composition and associated cost analysis.
-
-## File Structure
-
-- `main.py`: Entry point of the application.
-- `optimizer/`: Contains the core optimization logic.
-- `data/`: Includes material property datasets.
-- `tests/`: Unit tests for the application.
-- `requirements.txt`: List of Python dependencies.
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Submit a pull request with a detailed description of your changes.
+1. Clone the repository
+2. Install dependencies with `pip install -r requirements.txt`
+3. Run migrations with `python manage.py migrate`
+4. Create a superuser with `python manage.py createsuperuser`
+5. Run the development server with `python manage.py runserver`
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE] file for details.
 
-## Contact
+## Copyright
 
-For questions or support, please contact [your-email@example.com].
+Copyright 2025 RISHIK JHUNJHUNWALA
+
+## Notice
+
+This project contains third-party software. See the [NOTICE] file for details.
+
+## Keywords
+Linear Programming, Blending Problem, Mixed Blending Problem, Alloys and Metals, Alumunium recycling, secondary aluminium, cost optimisation, optimization, scrap

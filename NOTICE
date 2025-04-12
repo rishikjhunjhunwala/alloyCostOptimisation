@@ -1,0 +1,11 @@
+Alloy Optimizer
+Copyright 2025 RISHIK JHUNJHUNWALA
+
+This product includes software developed by
+RISHIK JHUNJHUNWALA.
+
+This software uses the following third-party libraries:
+- Django, licensed under BSD License (https://github.com/django/django/blob/main/LICENSE)
+- PuLP, licensed under MIT License (https://github.com/coin-or/pulp/blob/master/LICENSE)
+- Bootstrap, licensed under MIT License (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+- Pandas, licensed under BSD License (https://github.com/pandas-dev/pandas/blob/main/LICENSE)

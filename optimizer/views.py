@@ -19,18 +19,29 @@ from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.conf import settings
+<<<<<<< HEAD
 from django.contrib.auth import login
 from django.db.models import Q
+=======
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
 
 from .models import (
     ScrapData, CompositionRequirements, 
     OptimizationResult, OptimizationBatch, 
+<<<<<<< HEAD
     BatchProduct, Organization, UserProfile
 )
 from .forms import (
     ScrapDataForm, CompositionRequirementsForm, 
     BatchForm, BatchProductForm, UploadBatchForm,
     UserRegistrationForm, OrganizationForm
+=======
+    BatchProduct
+)
+from .forms import (
+    ScrapDataForm, CompositionRequirementsForm, 
+    BatchForm, BatchProductForm, UploadBatchForm
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
 )
 
 import pandas as pd
@@ -46,6 +57,7 @@ from optimization.solver import (
     preprocess_composition_requirements
 )
 
+<<<<<<< HEAD
 def register(request):
     """
     User registration view with organization selection.
@@ -73,6 +85,17 @@ def dashboard(request):
     results = OptimizationResult.objects.filter(organization=org).order_by('-created_at')[:5]
     scrap_data = ScrapData.objects.filter(organization=org).order_by('-uploaded_at')[:5]
     comp_requirements = CompositionRequirements.objects.filter(organization=org).order_by('-uploaded_at')[:5]
+=======
+@login_required
+def dashboard(request):
+    """
+    Main dashboard view showing recent batches and uploads.
+    """
+    batches = OptimizationBatch.objects.all().order_by('-created_at')[:5]
+    results = OptimizationResult.objects.all().order_by('-created_at')[:5]
+    scrap_data = ScrapData.objects.all().order_by('-uploaded_at')[:5]
+    comp_requirements = CompositionRequirements.objects.all().order_by('-uploaded_at')[:5]
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     
     context = {
         'batches': batches,
@@ -91,10 +114,14 @@ def upload_scrap_data(request):
     if request.method == 'POST':
         form = ScrapDataForm(request.POST, request.FILES)
         if form.is_valid():
+<<<<<<< HEAD
             instance = form.save(commit=False)
             instance.organization = request.organization
             instance.uploaded_by = request.user
             instance.save()
+=======
+            instance = form.save()
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
             messages.success(request, 'Scrap data uploaded successfully.')
             return redirect('dashboard')
     else:
@@ -115,10 +142,14 @@ def upload_composition_requirements(request):
     if request.method == 'POST':
         form = CompositionRequirementsForm(request.POST, request.FILES)
         if form.is_valid():
+<<<<<<< HEAD
             instance = form.save(commit=False)
             instance.organization = request.organization
             instance.uploaded_by = request.user
             instance.save()
+=======
+            instance = form.save()
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
             messages.success(request, 'Composition requirements uploaded successfully.')
             return redirect('dashboard')
     else:
@@ -134,6 +165,7 @@ def upload_composition_requirements(request):
 @login_required
 def view_scrap_data(request, pk=None):
     """
+<<<<<<< HEAD
     View for displaying scrap data for user's organization.
     """
     org = request.organization
@@ -142,6 +174,14 @@ def view_scrap_data(request, pk=None):
         scrap_data = get_object_or_404(ScrapData, pk=pk, organization=org)
     else:
         scrap_data = ScrapData.objects.filter(organization=org).order_by('-uploaded_at').first()
+=======
+    View for displaying scrap data.
+    """
+    if pk:
+        scrap_data = get_object_or_404(ScrapData, pk=pk)
+    else:
+        scrap_data = ScrapData.objects.latest('uploaded_at') if ScrapData.objects.exists() else None
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     
     if not scrap_data:
         messages.error(request, 'No scrap data found. Please upload a file first.')
@@ -162,6 +202,7 @@ def view_scrap_data(request, pk=None):
 @login_required
 def view_composition_requirements(request, pk=None):
     """
+<<<<<<< HEAD
     View for displaying composition requirements for user's organization.
     """
     org = request.organization
@@ -170,6 +211,14 @@ def view_composition_requirements(request, pk=None):
         comp_req = get_object_or_404(CompositionRequirements, pk=pk, organization=org)
     else:
         comp_req = CompositionRequirements.objects.filter(organization=org).order_by('-uploaded_at').first()
+=======
+    View for displaying composition requirements.
+    """
+    if pk:
+        comp_req = get_object_or_404(CompositionRequirements, pk=pk)
+    else:
+        comp_req = CompositionRequirements.objects.latest('uploaded_at') if CompositionRequirements.objects.exists() else None
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     
     if not comp_req:
         messages.error(request, 'No composition requirements found. Please upload a file first.')
@@ -192,6 +241,7 @@ def create_batch(request):
     """
     View for creating a new optimization batch.
     """
+<<<<<<< HEAD
     org = request.organization
     
     if not CompositionRequirements.objects.filter(organization=org).exists():
@@ -199,16 +249,27 @@ def create_batch(request):
         return redirect('upload_composition_requirements')
     
     if not ScrapData.objects.filter(organization=org).exists():
+=======
+    if not CompositionRequirements.objects.exists():
+        messages.error(request, 'No composition requirements found. Please upload a file first.')
+        return redirect('upload_composition_requirements')
+    
+    if not ScrapData.objects.exists():
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
         messages.error(request, 'No scrap data found. Please upload a file first.')
         return redirect('upload_scrap_data')
     
     if request.method == 'POST':
         form = BatchForm(request.POST)
         if form.is_valid():
+<<<<<<< HEAD
             batch = form.save(commit=False)
             batch.organization = org
             batch.created_by = request.user
             batch.save()
+=======
+            batch = form.save()
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
             messages.success(request, 'Batch created successfully.')
             return redirect('edit_batch', pk=batch.pk)
     else:
@@ -226,6 +287,7 @@ def edit_batch(request, pk):
     """
     View for editing a batch and adding products.
     """
+<<<<<<< HEAD
     org = request.organization
     batch = get_object_or_404(OptimizationBatch, pk=pk, organization=org)
     products = batch.products.all()
@@ -236,6 +298,13 @@ def edit_batch(request, pk):
     if not comp_req:
         messages.error(request, 'No composition requirements found. Please upload a file first.')
         return redirect('upload_composition_requirements')
+=======
+    batch = get_object_or_404(OptimizationBatch, pk=pk)
+    products = batch.products.all()
+    
+    # Get latest composition requirements
+    comp_req = CompositionRequirements.objects.latest('uploaded_at')
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     
     try:
         # Read product names from composition requirements
@@ -274,8 +343,12 @@ def upload_batch_products(request, pk):
     """
     View for uploading batch products from a CSV file.
     """
+<<<<<<< HEAD
     org = request.organization
     batch = get_object_or_404(OptimizationBatch, pk=pk, organization=org)
+=======
+    batch = get_object_or_404(OptimizationBatch, pk=pk)
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     form = UploadBatchForm(request.POST, request.FILES)
     
     if form.is_valid():
@@ -307,9 +380,13 @@ def remove_batch_product(request, batch_pk, product_pk):
     """
     View for removing a product from a batch.
     """
+<<<<<<< HEAD
     org = request.organization
     batch = get_object_or_404(OptimizationBatch, pk=batch_pk, organization=org)
     product = get_object_or_404(BatchProduct, pk=product_pk, batch=batch)
+=======
+    product = get_object_or_404(BatchProduct, pk=product_pk, batch_id=batch_pk)
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     product_name = product.product_name
     product.delete()
     messages.success(request, f'Product {product_name} removed from batch.')
@@ -320,14 +397,19 @@ def run_optimization(request, pk):
     """
     View for running the optimization for a batch.
     """
+<<<<<<< HEAD
     org = request.organization
     batch = get_object_or_404(OptimizationBatch, pk=pk, organization=org)
+=======
+    batch = get_object_or_404(OptimizationBatch, pk=pk)
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     
     if batch.products.count() == 0:
         messages.error(request, 'Cannot run optimization: batch has no products.')
         return redirect('edit_batch', pk=batch.pk)
     
     try:
+<<<<<<< HEAD
         # Get latest data files for this organization
         scrap_data_obj = ScrapData.objects.filter(organization=org).order_by('-uploaded_at').first()
         comp_req_obj = CompositionRequirements.objects.filter(organization=org).order_by('-uploaded_at').first()
@@ -335,6 +417,11 @@ def run_optimization(request, pk):
         if not scrap_data_obj or not comp_req_obj:
             messages.error(request, 'Missing required data files. Please upload scrap data and composition requirements.')
             return redirect('edit_batch', pk=batch.pk)
+=======
+        # Get latest data files
+        scrap_data_obj = ScrapData.objects.latest('uploaded_at')
+        comp_req_obj = CompositionRequirements.objects.latest('uploaded_at')
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
         
         # Read and preprocess data
         scrap_df = pd.read_csv(scrap_data_obj.file.path)
@@ -357,10 +444,15 @@ def run_optimization(request, pk):
         
         # Save results
         opt_result = OptimizationResult.objects.create(
+<<<<<<< HEAD
             organization=org,
             scrap_data=scrap_data_obj,
             composition_requirements=comp_req_obj,
             created_by=request.user,
+=======
+            scrap_data=scrap_data_obj,
+            composition_requirements=comp_req_obj,
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
             result_data=results,
             status='completed',
             total_cost=results['total_batch_cost'],
@@ -384,8 +476,12 @@ def view_optimization_result(request, pk):
     """
     View for displaying optimization results.
     """
+<<<<<<< HEAD
     org = request.organization
     result = get_object_or_404(OptimizationResult, pk=pk, organization=org)
+=======
+    result = get_object_or_404(OptimizationResult, pk=pk)
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     
     # Calculate scrap costs for each product
     if result.result_data and 'product_results' in result.result_data:
@@ -411,6 +507,10 @@ def view_optimization_result(request, pk):
         'data': result.result_data,
     }
     
+<<<<<<< HEAD
+=======
+    # Use the simple template instead
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     return render(request, 'optimizer/simple_result.html', context)
 
 @login_required
@@ -418,8 +518,12 @@ def download_optimization_result(request, pk):
     """
     View for downloading optimization results as CSV.
     """
+<<<<<<< HEAD
     org = request.organization
     result = get_object_or_404(OptimizationResult, pk=pk, organization=org)
+=======
+    result = get_object_or_404(OptimizationResult, pk=pk)
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     
     # Create CSV response
     response = HttpResponse(content_type='text/csv')
@@ -474,10 +578,16 @@ def download_optimization_result(request, pk):
 @login_required
 def batch_list(request):
     """
+<<<<<<< HEAD
     View for listing all batches for user's organization.
     """
     org = request.organization
     batches = OptimizationBatch.objects.filter(organization=org).order_by('-created_at')
+=======
+    View for listing all batches.
+    """
+    batches = OptimizationBatch.objects.all().order_by('-created_at')
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     
     context = {
         'batches': batches,
@@ -488,10 +598,16 @@ def batch_list(request):
 @login_required
 def result_list(request):
     """
+<<<<<<< HEAD
     View for listing all optimization results for user's organization.
     """
     org = request.organization
     results = OptimizationResult.objects.filter(organization=org).order_by('-created_at')
+=======
+    View for listing all optimization results.
+    """
+    results = OptimizationResult.objects.all().order_by('-created_at')
+>>>>>>> 17bcccaba7fb9cd976497db44b0d4a7bc8f1d078
     
     context = {
         'results': results,

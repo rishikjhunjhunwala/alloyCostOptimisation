@@ -1,0 +1,89 @@
+{% extends 'optimizer/base.html' %} {% block title %}{{ title }} - Alloy
+Optimizer{% endblock %} {% block content %}
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">{{ title }}</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Upload File</h5>
+      </div>
+      <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %} {% if form.errors %}
+          <div class="alert alert-danger">
+            Please fix the following errors:
+            <ul>
+              {% for field in form %} {% for error in field.errors %}
+              <li>{{ field.label }}: {{ error }}</li>
+              {% endfor %} {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+
+          <div class="mb-3">
+            <label for="{{ form.file.id_for_label }}" class="form-label"
+              >{{ form.file.label }}</label
+            >
+            <input
+              type="file"
+              name="{{ form.file.name }}"
+              id="{{ form.file.id_for_label }}"
+              class="form-control"
+              accept=".csv"
+            />
+            <div class="form-text">
+              Upload a CSV file with the required format.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Upload</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">File Format</h5>
+      </div>
+      <div class="card-body">
+        {% if 'composition' in request.path %}
+        <h6>Composition Requirements Format:</h6>
+        <p>The CSV file should include the following columns:</p>
+        <ul>
+          <li>Product - Product name</li>
+          <li>Amount - Required amount</li>
+          <li>SI_MIN, SI_MAX - Silicon min/max percentages</li>
+          <li>FE_MIN, FE_MAX - Iron min/max percentages</li>
+          <li>CU_MIN, CU_MAX - Copper min/max percentages</li>
+          <li>MN_MIN, MN_MAX - Manganese min/max percentages</li>
+          <li>MG_MIN, MG_MAX - Magnesium min/max percentages</li>
+        </ul>
+        <p>Example row: <code>AC2BF,10,0.055,0.065,0.003,0.004,...</code></p>
+        {% else %}
+        <h6>Scrap Data Format:</h6>
+        <p>The CSV file should include the following columns:</p>
+        <ul>
+          <li>Scrap_Type - Name of the scrap material</li>
+          <li>COST - Cost per unit</li>
+          <li>SI, FE, CU, MN, MG - Element compositions (percentage)</li>
+          <li>Available_Amount - Available amount of this material</li>
+        </ul>
+        <p>
+          Example row: <code>Primary Aluminium,207.75,0.04,0.06,0,0,0,100</code>
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

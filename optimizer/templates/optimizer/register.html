@@ -1,0 +1,98 @@
+<!-- optimizer/templates/optimizer/register.html -->
+{% extends 'optimizer/base.html' %}
+
+{% block title %}Register - Alloy Optimizer{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+    <h2 style="text-align: center; margin-bottom: 20px">Create Account</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            Please fix the following errors:
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">{{ form.first_name.label }}</label>
+                <input type="text" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" 
+                       class="form-control" value="{{ form.first_name.value|default:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">{{ form.last_name.label }}</label>
+                <input type="text" name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" 
+                       class="form-control" value="{{ form.last_name.value|default:'' }}" required>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
+            <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" 
+                   class="form-control" value="{{ form.username.value|default:'' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+            <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
+                   class="form-control" value="{{ form.email.value|default:'' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.organization.id_for_label }}" class="form-label">{{ form.organization.label }}</label>
+            <select name="{{ form.organization.name }}" id="{{ form.organization.id_for_label }}" 
+                    class="form-select" required>
+                <option value="">Select your organization</option>
+                {% for choice in form.organization.field.queryset %}
+                    <option value="{{ choice.pk }}" {% if form.organization.value == choice.pk %}selected{% endif %}>
+                        {{ choice.name }} ({{ choice.code }})
+                    </option>
+                {% endfor %}
+            </select>
+            <div class="form-text">{{ form.organization.help_text }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.employee_id.id_for_label }}" class="form-label">{{ form.employee_id.label }}</label>
+                <input type="text" name="{{ form.employee_id.name }}" id="{{ form.employee_id.id_for_label }}" 
+                       class="form-control" value="{{ form.employee_id.value|default:'' }}">
+                <div class="form-text">{{ form.employee_id.help_text }}</div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.department.id_for_label }}" class="form-label">{{ form.department.label }}</label>
+                <input type="text" name="{{ form.department.name }}" id="{{ form.department.id_for_label }}" 
+                       class="form-control" value="{{ form.department.value|default:'' }}">
+                <div class="form-text">{{ form.department.help_text }}</div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.password1.id_for_label }}" class="form-label">{{ form.password1.label }}</label>
+            <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" 
+                   class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.password2.id_for_label }}" class="form-label">{{ form.password2.label }}</label>
+            <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" 
+                   class="form-control" required>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Create Account</button>
+            <a href="{% url 'login' %}" class="btn btn-outline-secondary">Already have an account? Login</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

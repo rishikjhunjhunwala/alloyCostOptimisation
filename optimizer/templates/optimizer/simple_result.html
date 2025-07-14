@@ -1,0 +1,157 @@
+{% extends 'optimizer/base.html' %} {% block title %}Optimization Result - Alloy
+Optimizer {% endblock %} {% block content %}
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">Optimization Result #{{ result.id }}</h1>
+  </div>
+</div>
+<!--prettier-ignore-->
+
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Result Summary</h5>
+      </div>
+      <div class="card-body">
+        <table class="table">
+          <tr>
+            <th>Created:</th>
+            <td>{{ result.created_at|date:"M d, Y H:i" }}</td>
+          </tr>
+          <tr>
+            <th>Status:</th>
+            <td>{{ result.status }}</td>
+          </tr>
+          <tr>
+            <th>Products:</th>
+            <td>{{ result.total_products }}</td>
+          </tr>
+          <tr>
+            <th>Total Cost:</th>
+            <td>${{ result.total_cost|floatformat:2 }}</td>
+          </tr>
+        </table>
+
+        <div class="d-grid gap-2 mt-3">
+          <a
+            href="{% url 'download_optimization_result' pk=result.pk %}"
+            class="btn btn-success"
+          >
+            <i class="fas fa-download me-2"></i> Download Results (CSV)
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Total Scrap Usage</h5>
+      </div>
+      <div class="card-body">
+        {% if data.total_scrap_usage %}
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Material</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for material, amount in data.total_scrap_usage.items %}
+              <tr>
+                <td>{{ material }}</td>
+                <td>{{ amount|floatformat:4 }}</td>
+              </tr>
+              {% endfor %}
+              <tr class="table-primary">
+                <th>Total Cost</th>
+                <td>${{ data.total_batch_cost|floatformat:2 }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p>No scrap usage data available.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--prettier-ignore-->
+
+{% if data.product_results %} 
+    {% for product_name, product_result in data.product_results.items %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Product: {{ product_name }}</h5>
+      </div>
+      <div class="card-body">
+        {% if product_result.status == "optimal" %}
+        <div class="row">
+          <div class="col-md-6">
+            <h6>Scrap Mix</h6>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>Material</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for scrap, amount in product_result.scrap_mix.items %}
+                  <tr>
+                    <td>{{ scrap }}</td>
+                    <td>{{ amount|floatformat:4 }}</td>
+                  </tr>
+                  {% endfor %}
+                  <tr class="table-info">
+                    <th>Total Cost</th>
+                    <td>${{ product_result.total_cost|floatformat:2 }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <h6>Resulting Composition</h6>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>Element</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <!--prettier-ignore-->
+                <tbody>
+                            {% for element, value in product_result.resulting_composition.items %}
+                                <tr>
+                                    <td>{{ element }}</td>
+                                    <td>{{ value|floatformat:6 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          {{ product_result.message }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %} {% endif %} {% endblock %}
